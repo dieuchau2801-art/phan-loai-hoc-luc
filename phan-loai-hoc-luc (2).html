@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phân Loại Học Lực</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;600;700;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d14;
+    --card: #16161f;
+    --border: #2a2a3a;
+    --text: #e8e8f0;
+    --muted: #7070a0;
+    --xuat-sac: #ffd700;
+    --gioi: #4ade80;
+    --kha: #60a5fa;
+    --tb: #fb923c;
+    --yeu: #f87171;
+    --kem: #a78bfa;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Be Vietnam Pro', sans-serif;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    background-image: 
+      radial-gradient(ellipse at 20% 20%, rgba(96,165,250,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(167,139,250,0.06) 0%, transparent 50%);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 3rem;
+    animation: fadeDown 0.7s ease both;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.4rem;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 300;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* INPUT SECTION */
+  .input-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
+
+  .input-section h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+  }
+
+  .subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .subject-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .subject-item label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .subject-item input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    color: var(--text);
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+
+  .subject-item input:focus {
+    outline: none;
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96,165,250,0.15);
+  }
+
+  .subject-item input::placeholder { color: var(--border); font-weight: 400; }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  button {
+    padding: 0.7rem 1.8rem;
+    border-radius: 10px;
+    border: none;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  button:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(96,165,250,0.3);
+  }
+
+  .btn-primary:hover { box-shadow: 0 6px 28px rgba(96,165,250,0.5); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover { border-color: var(--muted); color: var(--text); }
+
+  /* RESULT SECTION */
+  .result-section {
+    display: none;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .result-section.show { display: block; }
+
+  .result-card {
+    background: var(--card);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .result-header {
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rating-badge {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 900;
+    flex-shrink: 0;
+    animation: pop 0.4s ease 0.2s both;
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .result-info h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .result-info .avg {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .result-info .avg span {
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .scores-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .scores-table th, .scores-table td {
+    padding: 0.9rem 1.5rem;
+    text-align: left;
+    font-size: 0.9rem;
+  }
+
+  .scores-table th {
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .scores-table tr:not(:last-child) td { border-bottom: 1px solid rgba(42,42,58,0.5); }
+
+  .scores-table td.score {
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .bar-cell { width: 40%; }
+
+  .score-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease;
+  }
+
+  /* LEGEND */
+  .legend {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    animation: fadeUp 0.6s ease 0.2s both;
+  }
+
+  .legend h2 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-item .range {
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
+
+  /* COLORS */
+  .xuat-sac { color: var(--xuat-sac); }
+  .gioi { color: var(--gioi); }
+  .kha { color: var(--kha); }
+  .tb { color: var(--tb); }
+  .yeu { color: var(--yeu); }
+  .kem { color: var(--kem); }
+
+  .bg-xuat-sac { background: rgba(255,215,0,0.15); border-color: rgba(255,215,0,0.3) !important; }
+  .bg-gioi { background: rgba(74,222,128,0.12); border-color: rgba(74,222,128,0.3) !important; }
+  .bg-kha { background: rgba(96,165,250,0.12); border-color: rgba(96,165,250,0.3) !important; }
+  .bg-tb { background: rgba(251,146,60,0.12); border-color: rgba(251,146,60,0.3) !important; }
+  .bg-yeu { background: rgba(248,113,113,0.12); border-color: rgba(248,113,113,0.3) !important; }
+  .bg-kem { background: rgba(167,139,250,0.12); border-color: rgba(167,139,250,0.3) !important; }
+
+  .fill-xuat-sac { background: var(--xuat-sac); }
+  .fill-gioi { background: var(--gioi); }
+  .fill-kha { background: var(--kha); }
+  .fill-tb { background: var(--tb); }
+  .fill-yeu { background: var(--yeu); }
+  .fill-kem { background: var(--kem); }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Phân Loại Học Lực</h1>
+    <p>Nhập điểm các môn để xếp loại học lực học sinh</p>
+  </header>
+
+  <div class="input-section">
+    <h2>Nhập Điểm Các Môn</h2>
+    <div class="subjects-grid" id="subjectsGrid">
+      <!-- generated by JS -->
+    </div>
+    <div class="actions">
+      <button class="btn-primary" onclick="calculate()">📊 Xếp Loại Ngay</button>
+      <button class="btn-secondary" onclick="resetForm()">↺ Làm Lại</button>
+    </div>
+  </div>
+
+  <div class="result-section" id="resultSection">
+    <div class="result-card" id="resultCard">
+      <div class="result-header" id="resultHeader"></div>
+      <table class="scores-table">
+        <thead>
+          <tr>
+            <th>Môn học</th>
+            <th>Điểm</th>
+            <th class="bar-cell">Biểu đồ</th>
+          </tr>
+        </thead>
+        <tbody id="scoresBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="legend">
+    <h2>Bảng Xếp Loại</h2>
+    <div class="legend-grid">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--xuat-sac)"></div><div><div>Xuất Sắc</div><div class="range">≥ 9.0</div></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--gioi)"></div><div><div>Giỏi</div><div class="range">8.0 – 8.9</div></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--kha)"></div><div><div>Khá</div><div class="range">6.5 – 7.9</div></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--tb)"></div><div><div>Trung Bình</div><div class="range">5.0 – 6.4</div></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--yeu)"></div><div><div>Yếu</div><div class="range">3.5 – 4.9</div></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--kem)"></div><div><div>Kém</div><div class="range">< 3.5</div></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const subjects = [
+  'Toán', 'Ngữ Văn', 'Tiếng Anh', 'Vật Lý', 'Hóa Học',
+  'Sinh Học', 'Lịch Sử', 'Địa Lý', 'GDCD', 'Tin Học'
+];
+
+function buildGrid() {
+  const grid = document.getElementById('subjectsGrid');
+  grid.innerHTML = subjects.map(s => `
+    <div class="subject-item">
+      <label>${s}</label>
+      <input type="number" min="0" max="10" step="0.1" placeholder="0 – 10" data-subject="${s}">
+    </div>
+  `).join('');
+}
+
+function getRating(avg) {
+  if (avg >= 9.0) return { label: 'Xuất Sắc', cls: 'xuat-sac', emoji: '🏆', bgCls: 'bg-xuat-sac' };
+  if (avg >= 8.0) return { label: 'Giỏi', cls: 'gioi', emoji: '⭐', bgCls: 'bg-gioi' };
+  if (avg >= 6.5) return { label: 'Khá', cls: 'kha', emoji: '✨', bgCls: 'bg-kha' };
+  if (avg >= 5.0) return { label: 'Trung Bình', cls: 'tb', emoji: '📘', bgCls: 'bg-tb' };
+  if (avg >= 3.5) return { label: 'Yếu', cls: 'yeu', emoji: '⚠️', bgCls: 'bg-yeu' };
+  return { label: 'Kém', cls: 'kem', emoji: '❗', bgCls: 'bg-kem' };
+}
+
+function calculate() {
+  const inputs = document.querySelectorAll('[data-subject]');
+  const scores = [];
+
+  inputs.forEach(inp => {
+    const val = parseFloat(inp.value);
+    if (!isNaN(val) && val >= 0 && val <= 10) {
+      scores.push({ subject: inp.dataset.subject, score: val });
+    }
+  });
+
+  if (scores.length === 0) {
+    alert('Vui lòng nhập ít nhất 1 điểm!');
+    return;
+  }
+
+  const avg = scores.reduce((a, b) => a + b.score, 0) / scores.length;
+  const rating = getRating(avg);
+
+  // Header
+  const header = document.getElementById('resultHeader');
+  header.innerHTML = `
+    <div class="rating-badge ${rating.cls}" style="background: var(--${rating.cls === 'xuat-sac' ? 'xuat-sac' : rating.cls}); background: rgba(var(--${rating.cls}),0.2); border: 2px solid currentColor;" class="${rating.cls}">
+      ${rating.emoji}
+    </div>
+    <div class="result-info">
+      <h3 class="${rating.cls}">${rating.label}</h3>
+      <div class="avg">Điểm trung bình: <span class="${rating.cls}">${avg.toFixed(2)}</span></div>
+      <div class="avg">${scores.length} môn được nhập</div>
+    </div>
+  `;
+
+  const card = document.getElementById('resultCard');
+  card.className = `result-card ${rating.bgCls}`;
+
+  // Table
+  const tbody = document.getElementById('scoresBody');
+  tbody.innerHTML = scores.map(s => {
+    const r = getRating(s.score);
+    const pct = (s.score / 10 * 100).toFixed(1);
+    return `
+      <tr>
+        <td>${s.subject}</td>
+        <td class="score ${r.cls}">${s.score.toFixed(1)}</td>
+        <td class="bar-cell">
+          <div class="score-bar">
+            <div class="score-bar-fill fill-${r.cls}" style="width:0%" data-width="${pct}%"></div>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  document.getElementById('resultSection').className = 'result-section show';
+  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.score-bar-fill').forEach(el => {
+      el.style.width = el.dataset.width;
+    });
+  }, 100);
+}
+
+function resetForm() {
+  buildGrid();
+  document.getElementById('resultSection').className = 'result-section';
+}
+
+buildGrid();
+</script>
+</body>
+</html>
